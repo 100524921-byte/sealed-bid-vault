@@ -14,16 +14,228 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      audit_log: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          details: Json
+          id: number
+          process_id: string | null
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          details?: Json
+          id?: number
+          process_id?: string | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          details?: Json
+          id?: number
+          process_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_log_process_id_fkey"
+            columns: ["process_id"]
+            isOneToOne: false
+            referencedRelation: "processes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bids: {
+        Row: {
+          bidder_id: string
+          ciphertext: string
+          id: string
+          iv: string
+          payload_hash: string
+          process_id: string
+          signature: string
+          signer_fingerprint: string
+          submitted_at: string
+          wrapped_key: string
+        }
+        Insert: {
+          bidder_id: string
+          ciphertext: string
+          id?: string
+          iv: string
+          payload_hash: string
+          process_id: string
+          signature: string
+          signer_fingerprint: string
+          submitted_at?: string
+          wrapped_key: string
+        }
+        Update: {
+          bidder_id?: string
+          ciphertext?: string
+          id?: string
+          iv?: string
+          payload_hash?: string
+          process_id?: string
+          signature?: string
+          signer_fingerprint?: string
+          submitted_at?: string
+          wrapped_key?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bids_bidder_id_fkey"
+            columns: ["bidder_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bids_process_id_fkey"
+            columns: ["process_id"]
+            isOneToOne: false
+            referencedRelation: "processes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      process_keys: {
+        Row: {
+          created_at: string
+          private_key: Json
+          process_id: string
+        }
+        Insert: {
+          created_at?: string
+          private_key: Json
+          process_id: string
+        }
+        Update: {
+          created_at?: string
+          private_key?: Json
+          process_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "process_keys_process_id_fkey"
+            columns: ["process_id"]
+            isOneToOne: true
+            referencedRelation: "processes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      processes: {
+        Row: {
+          asset_type: string
+          closes_at: string
+          created_at: string
+          description: string
+          encryption_public_key: Json
+          id: string
+          key_fingerprint: string
+          organizer_id: string
+          title: string
+        }
+        Insert: {
+          asset_type?: string
+          closes_at: string
+          created_at?: string
+          description?: string
+          encryption_public_key: Json
+          id?: string
+          key_fingerprint: string
+          organizer_id: string
+          title: string
+        }
+        Update: {
+          asset_type?: string
+          closes_at?: string
+          created_at?: string
+          description?: string
+          encryption_public_key?: Json
+          id?: string
+          key_fingerprint?: string
+          organizer_id?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "processes_organizer_id_fkey"
+            columns: ["organizer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          display_name: string
+          id: string
+          key_fingerprint: string | null
+          key_registered_at: string | null
+          organization: string
+          signing_public_key: Json | null
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string
+          id: string
+          key_fingerprint?: string | null
+          key_registered_at?: string | null
+          organization?: string
+          signing_public_key?: Json | null
+        }
+        Update: {
+          created_at?: string
+          display_name?: string
+          id?: string
+          key_fingerprint?: string | null
+          key_registered_at?: string | null
+          organization?: string
+          signing_public_key?: Json | null
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "organizer" | "bidder" | "auditor"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +362,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["organizer", "bidder", "auditor"],
+    },
   },
 } as const

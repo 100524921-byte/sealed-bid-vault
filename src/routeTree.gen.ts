@@ -12,8 +12,10 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedAuditRouteImport } from './routes/_authenticated/audit'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedKeysRouteImport } from './routes/_authenticated/keys'
+import { Route as AuthenticatedProcessesIdRouteImport } from './routes/_authenticated/processes.$id'
 import { Route as AuthenticatedProcessesNewRouteImport } from './routes/_authenticated/processes.new'
 
 const IndexRoute = IndexRouteImport.update({
@@ -30,6 +32,11 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAuditRoute = AuthenticatedAuditRouteImport.update({
+  id: '/audit',
+  path: '/audit',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -40,6 +47,12 @@ const AuthenticatedKeysRoute = AuthenticatedKeysRouteImport.update({
   path: '/keys',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedProcessesIdRoute =
+  AuthenticatedProcessesIdRouteImport.update({
+    id: '/processes/$id',
+    path: '/processes/$id',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedProcessesNewRoute =
   AuthenticatedProcessesNewRouteImport.update({
     id: '/processes/new',
@@ -50,15 +63,19 @@ const AuthenticatedProcessesNewRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/audit': typeof AuthenticatedAuditRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/keys': typeof AuthenticatedKeysRoute
+  '/processes/$id': typeof AuthenticatedProcessesIdRoute
   '/processes/new': typeof AuthenticatedProcessesNewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/audit': typeof AuthenticatedAuditRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/keys': typeof AuthenticatedKeysRoute
+  '/processes/$id': typeof AuthenticatedProcessesIdRoute
   '/processes/new': typeof AuthenticatedProcessesNewRoute
 }
 export interface FileRoutesById {
@@ -66,22 +83,40 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/audit': typeof AuthenticatedAuditRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/keys': typeof AuthenticatedKeysRoute
+  '/_authenticated/processes/$id': typeof AuthenticatedProcessesIdRoute
   '/_authenticated/processes/new': typeof AuthenticatedProcessesNewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/dashboard' | '/keys' | '/processes/new'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/audit'
+    | '/dashboard'
+    | '/keys'
+    | '/processes/$id'
+    | '/processes/new'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/dashboard' | '/keys' | '/processes/new'
+  to:
+    | '/'
+    | '/auth'
+    | '/audit'
+    | '/dashboard'
+    | '/keys'
+    | '/processes/$id'
+    | '/processes/new'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/audit'
     | '/_authenticated/dashboard'
     | '/_authenticated/keys'
+    | '/_authenticated/processes/$id'
     | '/_authenticated/processes/new'
   fileRoutesById: FileRoutesById
 }
@@ -114,6 +149,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/audit': {
+      id: '/_authenticated/audit'
+      path: '/audit'
+      fullPath: '/audit'
+      preLoaderRoute: typeof AuthenticatedAuditRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -128,6 +170,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedKeysRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/processes/$id': {
+      id: '/_authenticated/processes/$id'
+      path: '/processes/$id'
+      fullPath: '/processes/$id'
+      preLoaderRoute: typeof AuthenticatedProcessesIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/processes/new': {
       id: '/_authenticated/processes/new'
       path: '/processes/new'
@@ -139,14 +188,18 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAuditRoute: typeof AuthenticatedAuditRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedKeysRoute: typeof AuthenticatedKeysRoute
+  AuthenticatedProcessesIdRoute: typeof AuthenticatedProcessesIdRoute
   AuthenticatedProcessesNewRoute: typeof AuthenticatedProcessesNewRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAuditRoute: AuthenticatedAuditRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedKeysRoute: AuthenticatedKeysRoute,
+  AuthenticatedProcessesIdRoute: AuthenticatedProcessesIdRoute,
   AuthenticatedProcessesNewRoute: AuthenticatedProcessesNewRoute,
 }
 

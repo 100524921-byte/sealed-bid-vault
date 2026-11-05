@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Lock, LockOpen, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
+import { StatusPill } from "@/components/StatusPill";
 import { supabase } from "@/integrations/supabase/client";
 import { useMe } from "@/hooks/use-me";
 import { Button } from "@/components/ui/button";
@@ -95,17 +96,5 @@ function Dashboard() {
         </ul>
       )}
     </div>
-  );
-}
-
-export function StatusPill({ open }: { open: boolean }) {
-  return open ? (
-    <span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-sealed/60 px-2 py-0.5 font-mono text-[10px] uppercase tracking-widest text-sealed">
-      <Lock className="h-3 w-3" /> Sellado
-    </span>
-  ) : (
-    <span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-success/60 px-2 py-0.5 font-mono text-[10px] uppercase tracking-widest text-success">
-      <LockOpen className="h-3 w-3" /> Cerrado
-    </span>
   );
 }

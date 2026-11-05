@@ -41,8 +41,8 @@ function KeysPage() {
     e.preventDefault();
     const f = new FormData(e.currentTarget);
     const p1 = String(f.get("p1"));
-    if (p1 !== String(f.get("p2"))) return toast.error("Las frases no coinciden");
-    if (p1.length < 10) return toast.error("Usa al menos 10 caracteres");
+    if (p1 !== String(f.get("p2"))) return void toast.error("Las frases no coinciden");
+    if (p1.length < 10) return void toast.error("Usa al menos 10 caracteres");
     setBusy(true);
     try {
       const { publicJwk, privateJwk } = await generateSigningKeyPair();

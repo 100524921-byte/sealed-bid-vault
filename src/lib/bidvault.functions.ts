@@ -68,7 +68,7 @@ export const createProcess = createServerFn({ method: "POST" })
       throw new Error("La fecha de cierre debe ser al menos 1 minuto en el futuro");
     const { publicJwk, privateJwk } = await generateSealingKeyPair();
     const pub = { kty: publicJwk.kty, n: publicJwk.n, e: publicJwk.e };
-    const fingerprint = await jwkFingerprint(pub);
+    const fingerprint = await jwkFingerprint(pub as JsonWebKey);
     const db = await admin();
     const { data: row, error } = await db
       .from("processes")
@@ -199,14 +199,14 @@ export const revealProcess = createServerFn({ method: "POST" })
       bids: bids?.length ?? 0,
     });
     return {
-      privateKey: key?.private_key as unknown as Record<string, unknown>,
+      privateKeyJson: JSON.stringify(key?.private_key ?? null),
       bids: bids ?? [],
-      profiles: (profiles ?? []) as {
-        id: string;
-        display_name: string;
-        organization: string;
-        signing_public_key: unknown;
-        key_fingerprint: string | null;
-      }[],
+      profiles: (profiles ?? []).map((p) => ({
+        id: p.id,
+        display_name: p.display_name,
+        organization: p.organization,
+        key_fingerprint: p.key_fingerprint,
+        publicKeyJson: p.signing_public_key ? JSON.stringify(p.signing_public_key) : null,
+      })),
     };
   });

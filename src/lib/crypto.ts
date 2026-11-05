@@ -12,7 +12,7 @@ const dec = new TextDecoder();
 export function toB64(buf: ArrayBuffer | Uint8Array): string {
   const bytes = buf instanceof Uint8Array ? buf : new Uint8Array(buf);
   let s = "";
-  for (let i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]);
+  for (let i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]!);
   return btoa(s);
 }
 
@@ -84,7 +84,7 @@ export async function verifySignature(
 ): Promise<boolean> {
   try {
     const { kty, crv, x, y } = publicJwk;
-    const key = await crypto.subtle.importKey("jwk", { kty, crv, x, y }, ECDSA, false, ["verify"]);
+    const key = await crypto.subtle.importKey("jwk", { kty, crv, x, y } as JsonWebKey, ECDSA, false, ["verify"]);
     return await crypto.subtle.verify(ECDSA_SIGN, key, fromB64(signatureB64), enc.encode(message));
   } catch {
     return false;
@@ -99,7 +99,7 @@ export async function sealPayload(
   payload: unknown,
 ): Promise<SealedBid> {
   const { kty, n, e } = processPublicJwk;
-  const rsa = await crypto.subtle.importKey("jwk", { kty, n, e, alg: "RSA-OAEP-256" }, RSA, false, [
+  const rsa = await crypto.subtle.importKey("jwk", { kty, n, e, alg: "RSA-OAEP-256" } as JsonWebKey, RSA, false, [
     "encrypt",
   ]);
   const aes = await crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, true, ["encrypt"]);
@@ -121,7 +121,7 @@ export async function openPayload<T = unknown>(
 ): Promise<T> {
   const rsa = await crypto.subtle.importKey(
     "jwk",
-    { ...processPrivateJwk, alg: "RSA-OAEP-256", key_ops: ["decrypt"] },
+    { ...processPrivateJwk, alg: "RSA-OAEP-256", key_ops: ["decrypt"] } as JsonWebKey,
     RSA,
     false,
     ["decrypt"],

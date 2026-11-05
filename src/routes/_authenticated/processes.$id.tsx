@@ -153,9 +153,9 @@ function BidForm({ processId, publicKey }: { processId: string; publicKey: JsonW
     e.preventDefault();
     const f = new FormData(e.currentTarget);
     const wrapped = loadWrappedKey(me!.id);
-    if (!wrapped) return toast.error("No hay clave de firma en este navegador. Ve a Mis claves.");
+    if (!wrapped) return void toast.error("No hay clave de firma en este navegador. Ve a Mis claves.");
     if (wrapped.fingerprint !== me!.profile?.key_fingerprint)
-      return toast.error("Tu clave local no coincide con la registrada.");
+      return void toast.error("Tu clave local no coincide con la registrada.");
     setBusy(true);
     try {
       const priv = await unwrapPrivateKey(wrapped, String(f.get("pass")));
@@ -217,9 +217,9 @@ type Opened = {
   id: string;
   bidder: string;
   org: string;
-  amount?: number;
-  currency?: string;
-  conditions?: string;
+  amount: number | undefined;
+  currency: string | undefined;
+  conditions: string | undefined;
   submitted_at: string;
   sigOk: boolean;
   hashOk: boolean;
@@ -236,7 +236,7 @@ function Reveal({ processId }: { processId: string }) {
     setBusy(true);
     try {
       const r = await revealProcess({ data: { processId } });
-      const priv = r.privateKey as JsonWebKey;
+      const priv = JSON.parse(r.privateKeyJson) as JsonWebKey;
       const out: Opened[] = [];
       for (const [i, b] of r.bids.entries()) {
         const prof = r.profiles.find((x) => x.id === b.bidder_id);
@@ -245,8 +245,8 @@ function Reveal({ processId }: { processId: string }) {
         const sealed = { iv: b.iv, wrappedKey: b.wrapped_key, ciphertext };
         const message = bidSigningMessage({ processId, ...sealed });
         const hashOk = (await sha256Hex(message)) === b.payload_hash;
-        const sigOk = prof?.signing_public_key
-          ? await verifySignature(prof.signing_public_key as JsonWebKey, message, b.signature)
+        const sigOk = prof?.publicKeyJson
+          ? await verifySignature(JSON.parse(prof.publicKeyJson) as JsonWebKey, message, b.signature)
           : false;
         let payload: { amount?: number; currency?: string; conditions?: string; bidderId?: string; processId?: string } = {};
         let decryptOk = true;

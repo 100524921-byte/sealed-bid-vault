@@ -36,7 +36,7 @@ function AuthPage() {
       password: String(f.get("password")),
     });
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) return void toast.error(error.message);
     navigate({ to: "/dashboard" });
   }
 
@@ -58,7 +58,7 @@ function AuthPage() {
       },
     });
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) return void toast.error(error.message);
     if (data.session) navigate({ to: "/keys" });
     else setSent(email);
   }

@@ -22,7 +22,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { StatusPill } from "./dashboard";
+import { StatusPill } from "@/components/StatusPill";
 
 export const Route = createFileRoute("/_authenticated/processes/$id")({
   head: () => ({
